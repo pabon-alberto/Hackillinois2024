@@ -1,7 +1,9 @@
+import threading
 from typing import TypedDict
 from src import params, vehicle as vehicle_module, camera as camera_module, distance_sensor as distance_sensor_module, led as led_module, switch as switch_module
 from src.brains import ModuleTypes as BrainModuleTypes, Types as BrainTypes
 import json
+from time import sleep
 
 
 class Config(TypedDict):
@@ -19,6 +21,21 @@ config: Config = json.loads(params.CONFIG_PATH.read_text())
 # Load Camera
 camera_config = config['camera']
 camera = camera_module.Camera(camera_config)
+
+# Define function to continuously read QR codes
+def read_qr_codes():
+    while True:
+        qr_code_data = camera.read_qr_code()
+        if qr_code_data is not None:
+            print(qr_code_data)
+            camera.green_led.on()
+            sleep(3)
+            camera.green_led.off()
+            # If QR code is found, stop the loop
+            break
+# Allow the function to run in the background
+qr_code_thread = threading.Thread(target=read_qr_codes)
+qr_code_thread.start()
 
 # Load Distance Sensors
 distance_sensors_config = config['distance_sensors']

@@ -19,7 +19,7 @@ if __name__ == '__main__':
             "control2": 8
         }
     })
-
+    # Permit to set motor speeds from 0% to 100% in increments of 10%
     speeds = list(np.linspace(0, 1, 11)) + list(np.linspace(0.9, 0, 10))
 
     dt = 0.25
